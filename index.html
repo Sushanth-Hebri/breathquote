@@ -6,41 +6,45 @@
     <title>Random Quote Site</title>
     <style>
         * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body, html {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: black;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-}
+        body, html {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
 
-.quote-container {
-    max-width: 90%;
-    width: 600px;
-    padding: 20px;
-    border-radius: 10px;
-}
+        .quote-container {
+            max-width: 90%;
+            width: 600px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1); /* Optional: Add a slight background for better visibility */
+        }
 
-#quote {
-    font-size: 1.5rem;
-    line-height: 1.5;
-}
+        #quote {
+            font-size: 1.5rem;
+            line-height: 1.5;
+        }
 
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    #quote {
-        font-size: 1.2rem;
-    }
-}
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .quote-container {
+                width: 90%;
+            }
 
+            #quote {
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -51,35 +55,34 @@ body, html {
     </div>
 
     <script>
-      // Function to fetch a random quote from the API
-async function fetchQuote() {
-    try {
-        const response = await fetch('https://weather-bot-c9q4.onrender.com/api/random-quote');
-        const data = await response.json();
-        return data[0];  // Return the first quote object from the array
-    } catch (error) {
-        console.error('Error fetching quote:', error);
-        return null;
-    }
-}
+        // Function to fetch a random quote from the API
+        async function fetchQuote() {
+            try {
+                const response = await fetch('https://weather-bot-c9q4.onrender.com/api/random-quote');
+                const data = await response.json();
+                return data[0];  // Return the first quote object from the array
+            } catch (error) {
+                console.error('Error fetching quote:', error);
+                return null;
+            }
+        }
 
-// Function to update the quote on the page
-async function updateQuote() {
-    const quoteData = await fetchQuote();
-    const quoteElement = document.getElementById('quote');
-    
-    if (quoteData) {
-        // Use the `h` field for the HTML-formatted quote and author
-        quoteElement.innerHTML = quoteData.h;
-    } else {
-        quoteElement.innerText = 'Failed to fetch a new quote.';
-    }
-}
+        // Function to update the quote on the page
+        async function updateQuote() {
+            const quoteData = await fetchQuote();
+            const quoteElement = document.getElementById('quote');
+            
+            if (quoteData) {
+                // Use the `h` field for the HTML-formatted quote and author
+                quoteElement.innerHTML = quoteData.h;
+            } else {
+                quoteElement.innerText = 'Failed to fetch a new quote.';
+            }
+        }
 
-// Fetch and update the quote every 10 seconds
-updateQuote();
-setInterval(updateQuote, 10000);
-
+        // Fetch and update the quote every 10 seconds
+        updateQuote();
+        setInterval(updateQuote, 10000);
     </script>
 
 </body>
