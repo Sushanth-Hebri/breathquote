@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Quote Site</title>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.quote-container {
+    max-width: 90%;
+    width: 600px;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#quote {
+    font-size: 1.5rem;
+    line-height: 1.5;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    #quote {
+        font-size: 1.2rem;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="quote-container">
+        <div class="quote-text" id="quote">Loading quote...</div>
+        <div class="author" id="author"></div>
+    </div>
+
+    <script>
+      // Function to fetch a random quote from the API
+async function fetchQuote() {
+    try {
+        const response = await fetch('https://weather-bot-c9q4.onrender.com/api/random-quote');
+        const data = await response.json();
+        return data[0];  // Return the first quote object from the array
+    } catch (error) {
+        console.error('Error fetching quote:', error);
+        return null;
+    }
+}
+
+// Function to update the quote on the page
+async function updateQuote() {
+    const quoteData = await fetchQuote();
+    const quoteElement = document.getElementById('quote');
+    
+    if (quoteData) {
+        // Use the `h` field for the HTML-formatted quote and author
+        quoteElement.innerHTML = quoteData.h;
+    } else {
+        quoteElement.innerText = 'Failed to fetch a new quote.';
+    }
+}
+
+// Fetch and update the quote every 10 seconds
+updateQuote();
+setInterval(updateQuote, 10000);
+
+    </script>
+
+</body>
+</html>
