@@ -14,7 +14,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 
     // Send login request to the server
     try {
-        const response = await fetch('https://breathquote.onrender.com//login', {
+        const response = await fetch('https://breathquote.onrender.com/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
