@@ -14,7 +14,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 
     // Send login request to the server
     try {
-        const response = await fetch('http://localhost:5000/login', {
+        const response = await fetch('https://breathquote.onrender.com//login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             const token = data.token;
             localStorage.setItem('token', token);
              // Redirect to home page
-             window.location.href = 'home.html';
+             window.location.href = 'https://breathquote.onrender.com/home.html';
         } else {
             
             document.getElementById('message').innerText = data.message;
