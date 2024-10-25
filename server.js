@@ -113,6 +113,41 @@ app.get('/habits', async (req, res) => {
     }
 });
 
+
+// API route to get the completion percentage of habits by date
+app.get('/habits/completion-percentage', async (req, res) => {
+    try {
+        // Aggregate habits by date and calculate completion percentage
+        const result = await Habit.aggregate([
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+                    totalHabits: { $sum: 1 },
+                    completedHabits: { $sum: { $cond: ["$status", 1, 0] } }
+                }
+            },
+            {
+                $project: {
+                    date: "$_id",
+                    _id: 0,
+                    completionPercentage: { $multiply: [{ $divide: ["$completedHabits", "$totalHabits"] }, 100] }
+                }
+            },
+            { $sort: { date: -1 } }
+        ]);
+
+        res.json(result);
+    } catch (err) {
+        res.status(500).json({ message: 'Error calculating completion percentage' });
+    }
+});
+
+
+
+
+
+
+
 // API route to update habit status
 app.post('/habits/:id', async (req, res) => {
     const { status } = req.body;
