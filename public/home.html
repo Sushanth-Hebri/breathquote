@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Habits Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #habits-container {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .habit-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>sushanth</h1>
+    <p>Your daily habits tracker</p>
+
+    <!-- Habits Section -->
+    <div id="habits-container" style="display: none;">
+        <h2>Today's Habits</h2>
+        <div id="habits-list"></div>
+        <button onclick="logout()">Logout</button>
+    </div>
+    
+    <div id="protectedContent"></div>
+
+    <script>
+        // Function to check if token exists and is valid
+        const checkAuth = () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                // Redirect to login if no token
+                window.location.href = 'index.html';
+                return false;
+            } else {
+                // Decode token to check for expiration
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const currentTime = Date.now() / 1000;
+
+                if (payload.exp < currentTime) {
+                    // Token expired
+                    alert('Session expired. Please log in again.');
+                    window.location.href = 'index.html';
+                    return false;
+                }
+            }
+            return true; // Token is valid
+        };
+
+        // Fetch protected content
+        const fetchProtectedContent = async () => {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:5000/protected', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('protectedContent').innerText = data.message + ' (User ID: ' + data.userId + ')';
+                fetchHabits(); // Fetch habits after successful protected content
+            } else {
+                alert('Failed to fetch protected content. Please log in again.');
+                window.location.href = 'index.html';
+            }
+        };
+
+        // Fetch habits from server
+        const fetchHabits = async () => {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:5000/habits', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const habits = await response.json();
+                const habitsList = document.getElementById('habits-list');
+                habitsList.innerHTML = '';
+                habits.forEach(habit => {
+                    const habitItem = document.createElement('div');
+                    habitItem.className = 'habit-item';
+                    habitItem.innerHTML = `
+                        <span><strong>${habit.habit}</strong> (${habit.timelimit})</span>
+                        <button onclick="toggleHabitStatus('${habit._id}', ${!habit.status})">
+                            ${habit.status ? 'Done' : 'Pending'}
+                        </button>
+                    `;
+                    habitsList.appendChild(habitItem);
+                });
+                document.getElementById('habits-container').style.display = 'block';
+            } else {
+                alert('Error fetching habits. Please log in again.');
+                window.location.href = 'index.html';
+            }
+        };
+
+        // Toggle habit status
+        const toggleHabitStatus = async (habitId, status) => {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch(`http://localhost:5000/habits/${habitId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status })
+                });
+                if (response.ok) {
+                    fetchHabits(); // Refresh habits list
+                } else {
+                    alert('Error updating habit status');
+                }
+            } catch (error) {
+                alert('Error updating habit status');
+            }
+        };
+
+        // Logout function
+        const logout = () => {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        };
+
+        // Check authentication and fetch protected content
+        if (checkAuth()) {
+            fetchProtectedContent();
+        }
+    </script>
+</body>
+</html>
