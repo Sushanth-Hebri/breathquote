@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cron = require('node-cron');
 require('dotenv').config();
+const { createClient } = require('redis');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -54,6 +55,21 @@ const verifyToken = (req, res, next) => {
         next();
     });
 };
+
+const client = createClient({
+    password: 'hFblwq5PlD39B11paWU41eMq87Y2JYwq',  // Replace with your actual password
+    socket: {
+        host: 'redis-15514.c277.us-east-1-3.ec2.redns.redis-cloud.com',  // Replace with your actual Redis Cloud host
+        port: 15514  // Replace with your actual Redis Cloud port
+    }
+});
+
+client.on('error', (err) => console.log('Redis Client Error', err));
+
+(async () => {
+    await client.connect();
+    console.log('Connected to Redis Cloud');
+})();
 
 // Function to create daily habits
 const createDailyHabits = async () => {
@@ -113,13 +129,21 @@ app.get('/habits', async (req, res) => {
     }
 });
 
-
-// API route to get the completion percentage of habits by date
+// Caching route for completion percentage
 app.get('/habits/completion-percentage', async (req, res) => {
+    const cacheKey = 'completionPercentage';
+
     try {
-        // Aggregate habits by date and calculate completion percentage
+        // Check if data is in Redis cache
+        const cachedData = await client.get(cacheKey);
+        if (cachedData) {
+            return res.json(JSON.parse(cachedData));  // Return cached data
+        }
+
+        // Perform database aggregation if cache miss
         const result = await Habit.aggregate([
             {
+                // Group habits by date and calculate total and completed habits
                 $group: {
                     _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
                     totalHabits: { $sum: 1 },
@@ -127,20 +151,33 @@ app.get('/habits/completion-percentage', async (req, res) => {
                 }
             },
             {
+                // Calculate completion percentage
                 $project: {
                     date: "$_id",
                     _id: 0,
-                    completionPercentage: { $multiply: [{ $divide: ["$completedHabits", "$totalHabits"] }, 100] }
+                    completionPercentage: {
+                        $multiply: [
+                            { $cond: [{ $eq: ["$totalHabits", 0] }, 0, { $divide: ["$completedHabits", "$totalHabits"] }] },
+                            100
+                        ]
+                    }
                 }
             },
             { $sort: { date: -1 } }
         ]);
 
+        // Cache the result and set expiry (600 seconds = 10 minutes)
+        await client.setEx(cacheKey, 600, JSON.stringify(result));
+
         res.json(result);
     } catch (err) {
+        console.error(err);  // Log error for debugging
         res.status(500).json({ message: 'Error calculating completion percentage' });
     }
 });
+
+
+
 
 
 
