@@ -71,7 +71,7 @@
         // Fetch protected content
         const fetchProtectedContent = async () => {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/protected', {
+            const response = await fetch('https://breathquote.onrender.com/protected', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -91,7 +91,7 @@
         // Fetch habits from server
         const fetchHabits = async () => {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/habits', {
+            const response = await fetch('https://breathquote.onrender.com/habits', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -120,7 +120,7 @@
         const toggleHabitStatus = async (habitId, status) => {
             const token = localStorage.getItem('token');
             try {
-                const response = await fetch(`http://localhost:5000/habits/${habitId}`, {
+                const response = await fetch(`https://breathquote.onrender.com/habits/${habitId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
