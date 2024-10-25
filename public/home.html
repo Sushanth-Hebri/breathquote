@@ -51,7 +51,7 @@
             const token = localStorage.getItem('token');
             if (!token) {
                 // Redirect to login if no token
-                window.location.href = 'index.html';
+                window.location.href = 'https://breathquote.onrender.com';
                 return false;
             } else {
                 // Decode token to check for expiration
@@ -61,7 +61,7 @@
                 if (payload.exp < currentTime) {
                     // Token expired
                     alert('Session expired. Please log in again.');
-                    window.location.href = 'index.html';
+                    window.location.href = 'https://breathquote.onrender.com';
                     return false;
                 }
             }
@@ -84,7 +84,7 @@
                 fetchHabits(); // Fetch habits after successful protected content
             } else {
                 alert('Failed to fetch protected content. Please log in again.');
-                window.location.href = 'index.html';
+                window.location.href = 'https://breathquote.onrender.com';
             }
         };
 
@@ -112,7 +112,7 @@
                 document.getElementById('habits-container').style.display = 'block';
             } else {
                 alert('Error fetching habits. Please log in again.');
-                window.location.href = 'index.html';
+                window.location.href = 'https://breathquote.onrender.com';
             }
         };
 
@@ -141,7 +141,7 @@
         // Logout function
         const logout = () => {
             localStorage.removeItem('token');
-            window.location.href = 'index.html';
+            window.location.href = 'https://breathquote.onrender.com';
         };
 
         // Check authentication and fetch protected content
