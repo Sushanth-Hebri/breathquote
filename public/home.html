@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Habits Tracker</title>
@@ -43,6 +44,17 @@
         <button onclick="logout()">Logout</button>
     </div>
     
+    <!-- Add a section for displaying habit completion percentages -->
+<div id="completion-container" style="display: none;">
+    <h2>Completion Percentage by Date</h2>
+    <div id="completion-list"></div>
+</div>
+
+
+<!-- Canvas for Date vs. Completion Percentage Chart -->
+<div id="chart-container" style="width: 100%; max-width: 600px; margin: 20px auto;">
+    <canvas id="completionChart"></canvas>
+</div>
     <div id="protectedContent"></div>
 
     <script>
@@ -149,5 +161,105 @@
             fetchProtectedContent();
         }
     </script>
+    
+<script>
+    // Fetch and display habit completion percentages and plot chart
+    const fetchCompletionPercentages = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch('https://breathquote.onrender.com/habits/completion-percentage', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const completionData = await response.json();
+                displayCompletionPercentages(completionData);
+                plotCompletionChart(completionData);
+            } else {
+                alert('Error fetching completion percentages.');
+            }
+        } catch (error) {
+            alert('Error fetching completion percentages.');
+        }
+    };
+
+    // Display completion percentages in list format
+    const displayCompletionPercentages = (completionData) => {
+        const completionList = document.getElementById('completion-list');
+        completionList.innerHTML = '';
+        completionData.forEach(entry => {
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'habit-item';
+            entryDiv.innerHTML = `<strong>${entry.date}</strong>: ${entry.completionPercentage.toFixed(2)}% completed`;
+            completionList.appendChild(entryDiv);
+        });
+        document.getElementById('completion-container').style.display = 'block';
+    };
+
+    // Plot chart for habit completion percentages
+    const plotCompletionChart = (completionData) => {
+        const ctx = document.getElementById('completionChart').getContext('2d');
+
+        // Extract dates and percentages for chart labels and data
+        const labels = completionData.map(entry => entry.date);
+        const data = completionData.map(entry => entry.completionPercentage);
+
+        // Color code based on percentage ranges
+        const pointBackgroundColors = data.map(percentage => {
+            if (percentage < 33) return 'red';
+            else if (percentage < 66) return 'yellow';
+            else if (percentage < 85) return 'blue';
+            return 'green';
+        });
+
+        // Create chart
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Completion Percentage',
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    pointBackgroundColor: pointBackgroundColors,
+                    pointBorderColor: 'black',
+                    borderWidth: 1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Completion Percentage (%)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    };
+
+    // Check authentication and fetch data
+    if (checkAuth()) {
+        fetchProtectedContent();
+        fetchCompletionPercentages();
+    }
+</script>
+
 </body>
 </html>
