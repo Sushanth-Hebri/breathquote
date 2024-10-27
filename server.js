@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const cron = require('node-cron');
 require('dotenv').config();
 const { createClient } = require('redis');
+const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -198,7 +199,65 @@ app.get('/habits/completion-percentage', async (req, res) => {
 
 
 
+// Function to send a reminder email using Mailtrap
+const sendReminderEmail = async (habitName, email) => {
+    try {
+        await axios.post('https://send.api.mailtrap.io/api/send', {
+            from: {
+                email: 'hello@demomailtrap.com',
+                name: 'Daily Habit Reminder'
+            },
+            to: [{ email: email }],
+            subject: `Reminder: Complete your habit - ${habitName}`,
+            text: `Hi, please complete your habit '${habitName}' now.`,
+            category: 'Habit Reminder'
+        }, {
+            headers: {
+                Authorization: `Bearer ${process.env.MAILTRAP_API_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log(`Reminder email sent for habit: ${habitName}`);
+    } catch (error) {
+        console.error(`Error sending reminder email for habit: ${habitName}`, error);
+    }
+};
 
+// Function to check and send reminders for incomplete habits
+const iwillcheckroutine = async () => {
+    try {
+        const habits = await Habit.find(); // Fetch all habits for the day
+        const email = "sushanth.cs21@bmsce.ac.in"; // User email for reminders
+
+        habits.forEach(habit => {
+            const [hours, minutes] = habit.timelimit.split(':').map(Number);
+            const reminderTime = new Date();
+            reminderTime.setHours(hours, minutes + 1, 0, 0); // Set reminder time to 1 min after timelimit
+
+            if (new Date() >= reminderTime && habit.status === false) {
+                sendReminderEmail(habit.habit, email);
+            }
+        });
+    } catch (err) {
+        console.error('Error checking habits:', err);
+    }
+};
+
+// Schedule cron jobs for each habit based on their timelimit
+const scheduleHabitReminders = async () => {
+    const habits = await Habit.find();
+
+    habits.forEach(habit => {
+        const [hours, minutes] = habit.timelimit.split(':');
+        const cronTime = `${minutes} ${hours} * * *`; // Schedule cron 1 minute after timelimit
+
+        cron.schedule(cronTime, () => iwillcheckroutine());
+        console.log(`Scheduled habit check for: ${habit.habit} at ${cronTime}`);
+    });
+};
+
+// Initialize habit reminder schedules on server start
+scheduleHabitReminders();
 
 
 // API route to update habit status
