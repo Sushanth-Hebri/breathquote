@@ -223,29 +223,39 @@ const sendReminderEmail = async (habitName, email) => {
     }
 };
 
-// Function to check and send reminders for incomplete habits
+
 const iwillcheckroutine = async () => {
     try {
-        const habits = await Habit.find(); // Fetch all habits for the day
+        // Get the start and end of the current day
+        const today = new Date();
+        const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+        const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+
+        // Fetch habits only for the current day
+        const habits = await Habit.find({ date: { $gte: startOfDay, $lt: endOfDay } });
         const email = "sushanth.cs21@bmsce.ac.in"; // User email for reminders
 
         habits.forEach(habit => {
             const [hours, minutes] = habit.timelimit.split(':').map(Number);
             const reminderTime = new Date();
-            reminderTime.setHours(hours, minutes + 1, 0, 0); // Set reminder time to 1 min after timelimit
+            reminderTime.setHours(hours, minutes + 1, 0, 0); // Set reminder time to 1 minute after timelimit
 
             if (new Date() >= reminderTime && habit.status === false) {
                 sendReminderEmail(habit.habit, email);
             }
         });
     } catch (err) {
-        console.error('Error checking habits:', err);
+        console.error('Error checking today\'s habits:', err);
     }
 };
 
-// Schedule cron jobs for each habit based on their timelimit
+// Schedule cron jobs for each habit for the current day
 const scheduleHabitReminders = async () => {
-    const habits = await Habit.find();
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+
+    const habits = await Habit.find({ date: { $gte: startOfDay, $lt: endOfDay } });
 
     habits.forEach(habit => {
         const [hours, minutes] = habit.timelimit.split(':');
