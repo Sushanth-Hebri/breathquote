@@ -16,6 +16,7 @@
         "jsonwebtoken": "^9.0.0",
         "mailgun.js": "^10.2.3",
         "mongoose": "^7.2.2",
+        "redis": "^4.0.0",
         "node-cron": "^3.0.3"
     }
 }
