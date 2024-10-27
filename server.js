@@ -119,15 +119,31 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// API route to get habits
+
+// API route to get habits for the current day
 app.get('/habits', async (req, res) => {
     try {
-        const habits = await Habit.find();
+        // Get the current date
+        const currentDate = new Date();
+        
+        // Set the start and end of the current day
+        const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0)); // Start of the day
+        const endOfDay = new Date(currentDate.setHours(23, 59, 59, 999)); // End of the day
+
+        // Find habits where the date is between the start and end of the current day
+        const habits = await Habit.find({
+            date: {
+                $gte: startOfDay,
+                $lte: endOfDay
+            }
+        });
+
         res.json(habits);
     } catch (err) {
         res.status(500).json({ message: 'Error fetching habits' });
     }
 });
+
 
 // Caching route for completion percentage
 app.get('/habits/completion-percentage', async (req, res) => {
