@@ -1,265 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Habits Tracker</title>
+    <title>NeuroHabits | Your Smart Habit Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #5c6ac4;
+            --success: #63b3ed;
+            --warning: #fbd38d;
+            --danger: #fc8181;
+            --background: #f7fafc;
+            --text: #2d3748;
+            --card-bg: #ffffff;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        #habits-container {
-            margin: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            max-width: 400px;
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
             width: 100%;
-        }
-        h1, h2 {
+            padding: 2rem;
             text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            margin: 0.5rem 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-top: 0;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+
         .habit-item {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.8rem 0;
             display: flex;
             justify-content: space-between;
-            margin: 8px 0;
-            padding: 10px;
-            border: 1px solid #ddd;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .habit-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .habit-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .habit-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .habit-time {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .status-btn {
+            padding: 0.5rem 1rem;
+            border: none;
             border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .status-btn.pending {
+            background: var(--warning);
+            color: #744210;
+        }
+
+        .status-btn.done {
+            background: var(--success);
+            color: #234e52;
+        }
+
+        .status-btn:hover {
+            filter: brightness(110%);
+            transform: scale(1.05);
+        }
+
+        #chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .completion-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin: 0.5rem 0;
+            background: #f8fafc;
+        }
+
+        .completion-date {
+            font-weight: 500;
+        }
+
+        .completion-percentage {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .percentage-high {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .percentage-medium {
+            background: #fefcbf;
+            color: #744210;
+        }
+
+        .percentage-low {
+            background: #fed7d7;
+            color: #822727;
+        }
+
+        .logout-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card {
+                margin: 1rem 0;
+            }
+
+            .logout-btn {
+                bottom: 1rem;
+                right: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>sushanth</h1>
-    <p>Your daily habits tracker</p>
-
-    <!-- Habits Section -->
-    <div id="habits-container" style="display: none;">
-        <h2>Today's Habits</h2>
-        <div id="habits-list"></div>
-        <button onclick="logout()">Logout</button>
+    <div class="header animate__animated animate__fadeIn">
+        <h1>NeuroHabits</h1>
+        <p>Transform your daily routines into lasting success</p>
     </div>
-    
-    <!-- Add a section for displaying habit completion percentages -->
-<div id="completion-container" style="display: none;">
-    <h2>Completion Percentage by Date</h2>
-    <div id="completion-list"></div>
-</div>
 
+    <div class="dashboard">
+        <div class="card animate__animated animate__fadeInLeft">
+            <h2>Today's Habits</h2>
+            <div id="habits-list"></div>
+        </div>
 
-<!-- Canvas for Date vs. Completion Percentage Chart -->
-<div id="chart-container" style="width: 100%; max-width: 600px; margin: 20px auto;">
-    <canvas id="completionChart"></canvas>
-</div>
-    <div id="protectedContent"></div>
+        <div class="card animate__animated animate__fadeInRight">
+            <h2>Progress Overview</h2>
+            <div id="completion-list"></div>
+        </div>
+    </div>
 
-    <script>
-        // Function to check if token exists and is valid
-        const checkAuth = () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                // Redirect to login if no token
-                window.location.href = 'https://breathquote.onrender.com';
-                return false;
-            } else {
-                // Decode token to check for expiration
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                const currentTime = Date.now() / 1000;
+    <div id="chart-container" class="animate__animated animate__fadeInUp">
+        <canvas id="completionChart"></canvas>
+    </div>
 
-                if (payload.exp < currentTime) {
-                    // Token expired
-                    alert('Session expired. Please log in again.');
-                    window.location.href = 'https://breathquote.onrender.com';
-                    return false;
-                }
-            }
-            return true; // Token is valid
-        };
+    <button class="logout-btn animate__animated animate__fadeInRight" onclick="logout()">
+        Logout
+    </button>
 
-        // Fetch protected content
-        const fetchProtectedContent = async () => {
-            const token = localStorage.getItem('token');
-            const response = await fetch('https://breathquote.onrender.com/protected', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                document.getElementById('protectedContent').innerText = data.message + ' (User ID: ' + data.userId + ')';
-                fetchHabits(); // Fetch habits after successful protected content
-            } else {
-                alert('Failed to fetch protected content. Please log in again.');
-                window.location.href = 'https://breathquote.onrender.com';
-            }
-        };
-
-        // Fetch habits from server
-        const fetchHabits = async () => {
-            const token = localStorage.getItem('token');
-            const response = await fetch('https://breathquote.onrender.com/habits', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (response.ok) {
-                const habits = await response.json();
-                const habitsList = document.getElementById('habits-list');
-                habitsList.innerHTML = '';
-                habits.forEach(habit => {
-                    const habitItem = document.createElement('div');
-                    habitItem.className = 'habit-item';
-                    habitItem.innerHTML = `
-                        <span><strong>${habit.habit}</strong> (${habit.timelimit})</span>
-                        <button onclick="toggleHabitStatus('${habit._id}', ${!habit.status})">
-                            ${habit.status ? 'Done' : 'Pending'}
-                        </button>
-                    `;
-                    habitsList.appendChild(habitItem);
-                });
-                document.getElementById('habits-container').style.display = 'block';
-            } else {
-                alert('Error fetching habits. Please log in again.');
-                window.location.href = 'https://breathquote.onrender.com';
-            }
-        };
-
-        // Toggle habit status
-        const toggleHabitStatus = async (habitId, status) => {
-            const token = localStorage.getItem('token');
-            try {
-                const response = await fetch(`https://breathquote.onrender.com/habits/${habitId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ status })
-                });
-                if (response.ok) {
-                    fetchHabits(); // Refresh habits list
-                } else {
-                    alert('Error updating habit status');
-                }
-            } catch (error) {
-                alert('Error updating habit status');
-            }
-        };
-
-        // Logout function
-        const logout = () => {
-            localStorage.removeItem('token');
-            window.location.href = 'https://breathquote.onrender.com';
-        };
-
-        // Check authentication and fetch protected content
-        if (checkAuth()) {
-            fetchProtectedContent();
-        }
-    </script>
-    
-<script>
-    // Fetch and display habit completion percentages and plot chart
-    const fetchCompletionPercentages = async () => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch('https://breathquote.onrender.com/habits/completion-percentage', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (response.ok) {
-                const completionData = await response.json();
-                displayCompletionPercentages(completionData);
-                plotCompletionChart(completionData);
-            } else {
-                alert('Error fetching completion percentages.');
-            }
-        } catch (error) {
-            alert('Error fetching completion percentages.');
-        }
-    };
-
-    // Display completion percentages in list format
-    const displayCompletionPercentages = (completionData) => {
-        const completionList = document.getElementById('completion-list');
-        completionList.innerHTML = '';
-        completionData.forEach(entry => {
-            const entryDiv = document.createElement('div');
-            entryDiv.className = 'habit-item';
-            entryDiv.innerHTML = `<strong>${entry.date}</strong>: ${entry.completionPercentage.toFixed(2)}% completed`;
-            completionList.appendChild(entryDiv);
-        });
-        document.getElementById('completion-container').style.display = 'block';
-    };
-
-    // Plot chart for habit completion percentages
-    const plotCompletionChart = (completionData) => {
-        const ctx = document.getElementById('completionChart').getContext('2d');
-
-        // Extract dates and percentages for chart labels and data
-        const labels = completionData.map(entry => entry.date);
-        const data = completionData.map(entry => entry.completionPercentage);
-
-        // Color code based on percentage ranges
-        const pointBackgroundColors = data.map(percentage => {
-            if (percentage < 33) return 'red';
-            else if (percentage < 66) return 'yellow';
-            else if (percentage < 85) return 'blue';
-            return 'green';
-        });
-
-        // Create chart
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Completion Percentage',
-                    data: data,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    pointBackgroundColor: pointBackgroundColors,
-                    pointBorderColor: 'black',
-                    borderWidth: 1,
-                    fill: false
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: {
-                            display: true,
-                            text: 'Completion Percentage (%)'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Date'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
-            }
-        });
-    };
-
-    // Check authentication and fetch data
-    if (checkAuth()) {
-        fetchProtectedContent();
-        fetchCompletionPercentages();
-    }
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
