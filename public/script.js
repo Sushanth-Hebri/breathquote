@@ -47,16 +47,17 @@ const fetchProtectedContent = async () => {
     }
 };
 
-// Update user information
+// Update user information with animation
 const updateUserInfo = (data) => {
-    const header = document.querySelector('.header p');
-    header.textContent = `Welcome back, ${data.userId}!`;
+    const welcomeMessage = document.querySelector('.header p');
+    welcomeMessage.classList.add('animate__animated', 'animate__fadeIn');
+    welcomeMessage.textContent = `Welcome back, ${data.userId}! Let's make today count.`;
 };
 
-// Enhanced habits fetching with loading state
+// Enhanced habits fetching with loading state and animations
 const fetchHabits = async () => {
     const habitsList = document.getElementById('habits-list');
-    habitsList.innerHTML = '<p>Loading habits...</p>';
+    habitsList.innerHTML = '<div class="loading">Loading your habits...</div>';
 
     try {
         const token = localStorage.getItem('token');
@@ -70,23 +71,28 @@ const fetchHabits = async () => {
         renderHabits(habits);
     } catch (error) {
         console.error('Error:', error);
-        habitsList.innerHTML = '<p>Failed to load habits. Please try again.</p>';
+        habitsList.innerHTML = '<div class="error">Failed to load habits. Please try again.</div>';
     }
 };
 
-// Render habits with enhanced UI
+// Render habits with enhanced UI and animations
 const renderHabits = (habits) => {
     const habitsList = document.getElementById('habits-list');
     habitsList.innerHTML = '';
 
     if (habits.length === 0) {
-        habitsList.innerHTML = '<p>No habits found. Start adding some!</p>';
+        habitsList.innerHTML = `
+            <div class="empty-state animate__animated animate__fadeIn">
+                <p>No habits found. Start building better habits today!</p>
+            </div>
+        `;
         return;
     }
 
-    habits.forEach(habit => {
+    habits.forEach((habit, index) => {
         const habitItem = document.createElement('div');
-        habitItem.className = 'habit-item animate__animated animate__fadeIn';
+        habitItem.className = 'habit-item animate__animated animate__fadeInUp';
+        habitItem.style.animationDelay = `${index * 0.1}s`;
         
         const habitInfo = document.createElement('div');
         habitInfo.className = 'habit-info';
@@ -97,31 +103,29 @@ const renderHabits = (habits) => {
         
         const habitTime = document.createElement('span');
         habitTime.className = 'habit-time';
-        habitTime.textContent = habit.timelimit;
-        
-        habitInfo.appendChild(habitName);
-        habitInfo.appendChild(habitTime);
+        habitTime.textContent = `⏰ ${habit.timelimit}`;
         
         const statusBtn = document.createElement('button');
         statusBtn.className = `status-btn ${habit.status ? 'done' : 'pending'}`;
-        statusBtn.textContent = habit.status ? 'Completed' : 'Pending';
+        statusBtn.textContent = habit.status ? '✓ Completed' : '○ Pending';
         statusBtn.onclick = () => toggleHabitStatus(habit._id, !habit.status);
         
+        habitInfo.appendChild(habitName);
+        habitInfo.appendChild(habitTime);
         habitItem.appendChild(habitInfo);
         habitItem.appendChild(statusBtn);
         habitsList.appendChild(habitItem);
     });
 };
 
-// Enhanced habit status toggle with optimistic updates
+// Enhanced habit status toggle with animations
 const toggleHabitStatus = async (habitId, status) => {
     const button = event.target;
     const originalText = button.textContent;
     const originalClass = button.className;
     
-    // Optimistic update
-    button.textContent = status ? 'Completing...' : 'Updating...';
-    button.className = `status-btn ${status ? 'done' : 'pending'}`;
+    button.textContent = status ? '⌛ Updating...' : '⌛ Updating...';
+    button.className = `status-btn ${status ? 'done' : 'pending'} animate__animated animate__pulse`;
     button.disabled = true;
 
     try {
@@ -137,18 +141,17 @@ const toggleHabitStatus = async (habitId, status) => {
 
         if (!response.ok) throw new Error('Failed to update habit');
 
-        // Refresh data
         await Promise.all([fetchHabits(), fetchCompletionPercentages()]);
     } catch (error) {
         console.error('Error:', error);
         button.textContent = originalText;
         button.className = originalClass;
         button.disabled = false;
-        showToast('Failed to update habit status. Please try again.');
+        showToast('Failed to update habit status');
     }
 };
 
-// Enhanced completion percentages fetch
+// Enhanced completion percentages fetch with animations
 const fetchCompletionPercentages = async () => {
     try {
         const token = localStorage.getItem('token');
@@ -163,22 +166,27 @@ const fetchCompletionPercentages = async () => {
         plotCompletionChart(completionData);
     } catch (error) {
         console.error('Error:', error);
-        showToast('Failed to load completion data. Please try again.');
+        showToast('Failed to load completion data');
     }
 };
 
-// Enhanced completion percentages display
+// Display completion percentages with animations
 const displayCompletionPercentages = (completionData) => {
     const completionList = document.getElementById('completion-list');
     completionList.innerHTML = '';
 
-    completionData.forEach(entry => {
+    completionData.forEach((entry, index) => {
         const item = document.createElement('div');
-        item.className = 'completion-item animate__animated animate__fadeIn';
+        item.className = 'completion-item animate__animated animate__fadeInRight';
+        item.style.animationDelay = `${index * 0.1}s`;
 
         const date = document.createElement('span');
         date.className = 'completion-date';
-        date.textContent = new Date(entry.date).toLocaleDateString();
+        date.textContent = new Date(entry.date).toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric'
+        });
 
         const percentage = document.createElement('span');
         percentage.className = `completion-percentage ${getPercentageClass(entry.completionPercentage)}`;
@@ -193,7 +201,13 @@ const displayCompletionPercentages = (completionData) => {
 // Enhanced chart plotting with animations
 const plotCompletionChart = (completionData) => {
     const ctx = document.getElementById('completionChart').getContext('2d');
-    const dates = completionData.map(entry => new Date(entry.date).toLocaleDateString());
+    const dates = completionData.map(entry => 
+        new Date(entry.date).toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric'
+        })
+    );
     const percentages = completionData.map(entry => entry.completionPercentage);
 
     if (window.completionChart) {
@@ -229,6 +243,9 @@ const plotCompletionChart = (completionData) => {
                     max: 100,
                     grid: {
                         color: 'rgba(0, 0, 0, 0.05)'
+                    },
+                    ticks: {
+                        callback: value => `${value}%`
                     }
                 },
                 x: {
@@ -251,7 +268,10 @@ const plotCompletionChart = (completionData) => {
                     bodyFont: {
                         size: 13
                     },
-                    displayColors: false
+                    displayColors: false,
+                    callbacks: {
+                        label: context => `Completion: ${context.parsed.y.toFixed(1)}%`
+                    }
                 }
             }
         }
@@ -271,17 +291,28 @@ const getPointColor = (percentage) => {
     return '#f56565';
 };
 
+// Enhanced toast notification
 const showToast = (message) => {
-    // Implementation of toast notification
-    alert(message); // Fallback to alert if toast implementation is not available
+    const toast = document.createElement('div');
+    toast.className = 'toast animate__animated animate__fadeInUp';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.replace('animate__fadeInUp', 'animate__fadeOutDown');
+        setTimeout(() => toast.remove(), 1000);
+    }, 3000);
 };
 
-// Enhanced logout with confirmation
+// Enhanced logout with animation
 const logout = () => {
-    if (confirm('Are you sure you want to logout?')) {
+    const logoutBtn = document.querySelector('.logout-btn');
+    logoutBtn.classList.add('animate__animated', 'animate__fadeOutRight');
+    
+    setTimeout(() => {
         localStorage.clear();
-        redirectToLogin('Logged out successfully.');
-    }
+        redirectToLogin('Logged out successfully');
+    }, 500);
 };
 
 // Initialize the application
