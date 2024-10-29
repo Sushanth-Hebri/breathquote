@@ -8,13 +8,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* CSS Variables */
         :root {
             --primary: #6366f1;
             --primary-dark: #4f46e5;
             --secondary: #ec4899;
             --success: #22c55e;
             --warning: #eab308;
-            --danger: #ef4444;
             --background: #f8fafc;
             --card: #ffffff;
             --text: #0f172a;
@@ -22,6 +22,7 @@
             --border: #e2e8f0;
         }
 
+        /* Basic Reset */
         * {
             margin: 0;
             padding: 0;
@@ -35,40 +36,23 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            align-items: center;
         }
 
+        /* Header Styling */
         .header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             padding: 2rem;
             color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.5;
-        }
-
-        .header-content {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
             text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .header h1 {
             font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0.5rem;
         }
 
         .header p {
@@ -76,21 +60,27 @@
             opacity: 0.9;
         }
 
+        /* Container and Card Styling */
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 2rem;
+            margin-top: 1.5rem;
+            max-width: 1000px;
+            width: 90%;
         }
 
         .card {
             background: var(--card);
             border-radius: 1rem;
             padding: 1.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .card:hover {
@@ -100,31 +90,17 @@
         .card h2 {
             color: var(--primary);
             font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
+        /* Habit Item Styling */
         .habit-item {
             background: var(--background);
             border-radius: 0.8rem;
             padding: 1rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
             border: 1px solid var(--border);
-        }
-
-        .habit-item:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .habit-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
         }
 
         .habit-name {
@@ -132,56 +108,27 @@
             color: var(--text);
         }
 
-        .habit-time {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
         .status-btn {
-            width: 100%;
-            padding: 0.8rem;
+            padding: 0.5rem 1rem;
             border: none;
             border-radius: 0.5rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+            color: white;
         }
 
         .status-btn.pending {
             background: var(--warning);
-            color: #000;
         }
 
         .status-btn.done {
             background: var(--success);
-            color: white;
         }
 
-        .status-btn:hover {
-            filter: brightness(110%);
-            transform: scale(1.02);
-        }
-
-        .progress-chart {
-            background: var(--card);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            grid-column: 1 / -1;
-        }
-
+        /* Stats and Loading Animation */
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            display: flex;
             gap: 1rem;
-            margin-bottom: 2rem;
         }
 
         .stat-card {
@@ -189,6 +136,7 @@
             padding: 1rem;
             border-radius: 0.8rem;
             text-align: center;
+            flex: 1;
         }
 
         .stat-value {
@@ -200,41 +148,13 @@
 
         .stat-label {
             color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--primary);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-                gap: 1rem;
-            }
-
-            .header h1 {
-                font-size: 2rem;
-            }
-
-            .card {
-                margin-bottom: 1rem;
-            }
         }
 
         .loading {
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 200px;
+            min-height: 100px;
         }
 
         .loading::after {
@@ -256,18 +176,18 @@
 </head>
 <body>
     <div class="header">
-        <div class="header-content">
-            <h1 class="animate__animated animate__fadeInDown">Daily Habit Tracker</h1>
-            <p class="animate__animated animate__fadeInUp">Transform your daily routines into lasting success</p>
-        </div>
+        <h1 class="animate__animated animate__fadeInDown">Daily Habit Tracker</h1>
+        <p class="animate__animated animate__fadeInUp">Transform your daily routines into lasting success</p>
     </div>
 
     <div class="container">
+        <!-- Habits Card -->
         <div class="card animate__animated animate__fadeInLeft">
             <h2>📋 Today's Habits</h2>
             <div id="habits-list" class="loading"></div>
         </div>
 
+        <!-- Progress Overview Card -->
         <div class="card animate__animated animate__fadeInRight">
             <h2>📊 Progress Overview</h2>
             <div class="stats-grid">
@@ -280,210 +200,32 @@
                     <div class="stat-label">Day Streak</div>
                 </div>
             </div>
-            <div id="completion-list"></div>
-        </div>
-
-        <div class="progress-chart animate__animated animate__fadeInUp">
-            <h2>📈 Progress Timeline</h2>
-            <canvas id="completionChart"></canvas>
         </div>
     </div>
 
+    <!-- JavaScript to Simulate Habit Loading -->
     <script>
-        // Authentication check
-        const checkAuth = () => {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                window.location.href = '/login.html';
-                return false;
-            }
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                if (payload.exp < Date.now() / 1000) {
-                    localStorage.removeItem('token');
-                    window.location.href = '/login.html';
-                    return false;
-                }
-            } catch (e) {
-                localStorage.removeItem('token');
-                window.location.href = '/login.html';
-                return false;
-            }
-            return true;
-        };
-
-        // Fetch habits
-        const fetchHabits = async () => {
-            const habitsList = document.getElementById('habits-list');
-            try {
-                const response = await fetch('https://breathquote.onrender.com/habits', {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-                
-                if (!response.ok) throw new Error('Failed to fetch habits');
-                
-                const habits = await response.json();
-                renderHabits(habits);
-                updateStats(habits);
-            } catch (error) {
-                console.error('Error:', error);
-                habitsList.innerHTML = `
-                    <div class="error">
-                        Failed to load habits. Please try again.
-                    </div>
-                `;
-            }
-        };
-
-        // Render habits
-        const renderHabits = (habits) => {
-            const habitsList = document.getElementById('habits-list');
-            habitsList.innerHTML = '';
-
-            if (habits.length === 0) {
-                habitsList.innerHTML = `
-                    <div class="empty-state">
-                        <p>No habits found for today.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            habits.forEach((habit, index) => {
-                const habitElement = document.createElement('div');
-                habitElement.className = `habit-item animate__animated animate__fadeInUp animate__delay-${index}s`;
-                
-                habitElement.innerHTML = `
-                    <div class="habit-header">
-                        <span class="habit-name">${habit.habit}</span>
-                        <span class="habit-time">⏰ ${habit.timelimit}</span>
-                    </div>
-                    <button 
-                        onclick="toggleHabitStatus('${habit._id}', ${!habit.status})"
-                        class="status-btn ${habit.status ? 'done' : 'pending'}"
-                    >
-                        ${habit.status ? '✓ Completed' : '○ Pending'}
-                    </button>
-                `;
-                
-                habitsList.appendChild(habitElement);
-            });
-        };
-
-        // Toggle habit status
-        const toggleHabitStatus = async (habitId, status) => {
-            try {
-                const response = await fetch(`https://breathquote.onrender.com/habits/${habitId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                    body: JSON.stringify({ status })
-                });
-
-                if (!response.ok) throw new Error('Failed to update habit');
-
-                showToast(status ? 'Habit marked as complete! 🎉' : 'Habit marked as pending');
-                await fetchHabits();
-                await fetchCompletionPercentages();
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Failed to update habit status');
-            }
-        };
-
-        // Fetch completion percentages
-        const fetchCompletionPercentages = async () => {
-            try {
-                const response = await fetch('https://breathquote.onrender.com/habits/completion-percentage', {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-
-                if (!response.ok) throw new Error('Failed to fetch completion data');
-
-                const completionData = await response.json();
-                updateCompletionChart(completionData);
-            } catch (error) {
-                console.error('Error:', error);
-                showToast('Failed to load completion data');
-            }
-        };
-
-        // Update completion chart
-        const updateCompletionChart = (data) => {
-            const ctx = document.getElementById('completionChart').getContext('2d');
-            
-            if (window.completionChart) {
-                window.completionChart.destroy();
-            }
-
-            window.completionChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.map(entry => entry.date),
-                    datasets: [{
-                        label: 'Completion Rate',
-                        data: data.map(entry => entry.completionPercentage),
-                        borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                callback: value => `${value}%`
-                            }
-                        }
-                    }
-                }
-            });
-        };
-
-        // Update statistics
-        const updateStats = (habits) => {
-            const completedHabits = habits.filter(habit => habit.status).length;
-            const completionRate = (completedHabits / habits.length) * 100;
-            
-            document.getElementById('completion-rate').textContent = `${completionRate.toFixed(0)}%`;
-            // Note: Streak count would need to be calculated based on historical data
-            // This is a placeholder
-            document.getElementById('streak-count').textContent = '3';
-        };
-
-        // Show toast notification
-        const showToast = (message) => {
-            const toast = document.createElement('div');
-            toast.className = 'toast animate__animated animate__fadeInUp';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-
+        document.addEventListener("DOMContentLoaded", () => {
+            const habitsList = document.getElementById("habits-list");
+            // Simulate loading delay
             setTimeout(() => {
-                toast.classList.replace('animate__fadeInUp', 'animate__fadeOutDown');
-                setTimeout(() => toast.remove(), 1000);
-            }, 3000);
-        };
-
-        // Initialize
-        if (checkAuth()) {
-            fetchHabits();
-            fetchCompletionPercentages();
-        }
+                habitsList.classList.remove("loading");
+                habitsList.innerHTML = `
+                    <div class="habit-item">
+                        <div class="habit-name">Meditate</div>
+                        <button class="status-btn pending">Pending</button>
+                    </div>
+                    <div class="habit-item">
+                        <div class="habit-name">Exercise</div>
+                        <button class="status-btn done">Done</button>
+                    </div>
+                    <div class="habit-item">
+                        <div class="habit-name">Read</div>
+                        <button class="status-btn pending">Pending</button>
+                    </div>
+                `;
+            }, 1500);
+        });
     </script>
 </body>
 </html>
