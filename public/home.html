@@ -8,170 +8,259 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* CSS Variables */
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #ec4899;
-            --success: #22c55e;
-            --warning: #eab308;
-            --background: #f8fafc;
-            --card: #ffffff;
-            --text: #0f172a;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-        }
+       /* Variables */
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #ec4899;
+    --success: #22c55e;
+    --warning: #eab308;
+    --danger: #ef4444;
+    --background: #f8fafc;
+    --card: #ffffff;
+    --text: #0f172a;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+}
 
-        /* Basic Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
 
-        body {
-            background: var(--background);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+body {
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
-        /* Header Styling */
-        .header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 2rem;
-            color: white;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+/* Header Styles */
+.header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    padding: 2rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
 
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
+.header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    opacity: 0.5;
+}
 
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
+.header-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
 
-        /* Container and Card Styling */
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            margin-top: 1.5rem;
-            max-width: 1000px;
-            width: 90%;
-        }
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-        .card {
-            background: var(--card);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
+.header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
 
-        .card:hover {
-            transform: translateY(-5px);
-        }
+/* Container & Card Styles */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
 
-        .card h2 {
-            color: var(--primary);
-            font-size: 1.5rem;
-        }
+.card {
+    background: var(--card);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
 
-        /* Habit Item Styling */
-        .habit-item {
-            background: var(--background);
-            border-radius: 0.8rem;
-            padding: 1rem;
-            border: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.card:hover {
+    transform: translateY(-5px);
+}
 
-        .habit-name {
-            font-weight: 600;
-            color: var(--text);
-        }
+.card h2 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
-        .status-btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            color: white;
-        }
+/* Habit Item Styles */
+.habit-item {
+    background: var(--background);
+    border-radius: 0.8rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+}
 
-        .status-btn.pending {
-            background: var(--warning);
-        }
+.habit-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
 
-        .status-btn.done {
-            background: var(--success);
-        }
+.habit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
 
-        /* Stats and Loading Animation */
-        .stats-grid {
-            display: flex;
-            gap: 1rem;
-        }
+.habit-name {
+    font-weight: 600;
+    color: var(--text);
+}
 
-        .stat-card {
-            background: var(--background);
-            padding: 1rem;
-            border-radius: 0.8rem;
-            text-align: center;
-            flex: 1;
-        }
+.habit-time {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
 
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.3rem;
-        }
+/* Button Styles */
+.status-btn {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
 
-        .stat-label {
-            color: var(--text-light);
-        }
+.status-btn.pending {
+    background: var(--warning);
+    color: #000;
+}
 
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100px;
-        }
+.status-btn.done {
+    background: var(--success);
+    color: white;
+}
 
-        .loading::after {
-            content: '';
-            width: 30px;
-            height: 30px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: loading 0.8s infinite linear;
-        }
+.status-btn:hover {
+    filter: brightness(110%);
+    transform: scale(1.02);
+}
 
-        @keyframes loading {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+/* Progress Chart Styles */
+.progress-chart {
+    background: var(--card);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    grid-column: 1 / -1;
+}
+
+/* Stats Grid Styles */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--background);
+    padding: 1rem;
+    border-radius: 0.8rem;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.3rem;
+}
+
+.stat-label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* Toast Notification Styles */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--primary);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+/* Loading State Styles */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.loading::after {
+    content: '';
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: loading 0.8s infinite linear;
+}
+
+/* Animations */
+@keyframes loading {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+        gap: 1rem;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+    }
+}
     </style>
 </head>
 <body>
@@ -203,29 +292,6 @@
         </div>
     </div>
 
-    <!-- JavaScript to Simulate Habit Loading -->
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const habitsList = document.getElementById("habits-list");
-            // Simulate loading delay
-            setTimeout(() => {
-                habitsList.classList.remove("loading");
-                habitsList.innerHTML = `
-                    <div class="habit-item">
-                        <div class="habit-name">Meditate</div>
-                        <button class="status-btn pending">Pending</button>
-                    </div>
-                    <div class="habit-item">
-                        <div class="habit-name">Exercise</div>
-                        <button class="status-btn done">Done</button>
-                    </div>
-                    <div class="habit-item">
-                        <div class="habit-name">Read</div>
-                        <button class="status-btn pending">Pending</button>
-                    </div>
-                `;
-            }, 1500);
-        });
-    </script>
+  
 </body>
 </html>
